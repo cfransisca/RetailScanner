@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "224741668538",
+    "firebase_url": "https://omni-ubaya.firebaseio.com",
+    "project_id": "omni-ubaya",
+    "storage_bucket": "omni-ubaya.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:224741668538:android:436fdd8924cbd8f1",
+        "android_client_info": {
+          "package_name": "com.zero.next.retailscanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "224741668538-pjgqb3uhvrl3vn7j5ea0bcr7l52739s2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zero.next.retailscanner",
+            "certificate_hash": "e8ad1619eaf4e2ee6e4b71b54b0f30c7479a3f56"
+          }
+        },
+        {
+          "client_id": "224741668538-g61fdmfg907q9p0bqds92vmv5g6a527k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zero.next.retailscanner",
+            "certificate_hash": "c23c3f86528e21574676bbec66288e2c850bf911"
+          }
+        },
+        {
+          "client_id": "224741668538-7ohm0s1n6nrl3pm9i6vsm30lia3sakne.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGRa9MH4nAiweh5wWV4erGrhJsOLtm6sM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "224741668538-7ohm0s1n6nrl3pm9i6vsm30lia3sakne.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

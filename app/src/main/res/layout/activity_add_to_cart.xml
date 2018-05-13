@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.zero.next.retailscanner.AddToCartActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/relativeLayout">
+        <ImageView
+            android:id="@+id/gbr"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"/>
+        <TextView
+            android:id="@+id/namaTxt"
+            android:text="nama"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/gbr"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:textStyle="bold"
+            android:textSize="25sp"/>
+        <TextView
+            android:id="@+id/hargaTxt"
+            android:text="harga"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/namaTxt"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:textSize="20sp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/relativeLayout"
+        android:layout_marginTop="12dp">
+
+        <TextView
+            android:id="@+id/label1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/qty"
+            android:layout_alignLeft="@+id/label2"
+            android:layout_alignStart="@+id/label2"
+            android:text="Jumlah barang yang ingin dibeli"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/qty"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignEnd="@+id/totalTxt"
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/totalTxt"
+            android:layout_marginEnd="14dp"
+            android:layout_marginRight="14dp"
+            android:inputType="number"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/label2"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="31dp"
+            android:layout_marginStart="31dp"
+            android:text="Total"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/totalTxt"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/label2"
+            android:layout_alignBottom="@+id/label2"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="26dp"
+            android:layout_marginRight="26dp"
+            android:text="0"
+            android:textAlignment="center"
+            android:textSize="15sp" />
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btnAddToCart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="41dp"
+        android:layout_marginLeft="35dp"
+        android:layout_marginStart="35dp"
+        android:background="#45f442"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="Add To Cart"
+        android:textColor="#000000" />
+
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnAddToCart"
+        android:layout_alignBottom="@+id/btnAddToCart"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="37dp"
+        android:layout_marginRight="37dp"
+        android:background="#45f442"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="Cancel"
+        android:textColor="#000000" />
+
+</RelativeLayout>
