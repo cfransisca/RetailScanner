@@ -35,9 +35,8 @@
             android:theme="@style/zxing_CaptureTheme" />
         <!-- end -->
 
+        <!-- intent filter utk yg diload pertama -->
         <activity android:name=".LoginActivity">
-
-            <!-- intent filter utk yg diload pertama -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

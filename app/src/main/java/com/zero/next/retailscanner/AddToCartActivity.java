@@ -1,7 +1,10 @@
 package com.zero.next.retailscanner;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -27,13 +30,15 @@ import java.util.Date;
 public class AddToCartActivity extends AppCompatActivity {
     private static final String TAG = "scan";
     FirebaseDatabase database;
-    DatabaseReference myRef;
+    DatabaseReference myRef, updateStok;
     TextView namaText, hargaText, totalText;
     EditText qtyText;
     Button btnAddToCart;
-    String id, nama, harga, userId;
+    String id, nama, harga, userId, grandTotal, stok;
+    int total, currentStok;
     PrefManager prefManager;
     SharedPreferences sharedPreferences;
+    AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +57,7 @@ public class AddToCartActivity extends AppCompatActivity {
     }
 
     private void initComponent() {
+        builder = new AlertDialog.Builder(this);
         namaText = findViewById(R.id.namaTxt);
         hargaText = findViewById(R.id.hargaTxt);
         totalText = findViewById(R.id.totalTxt);
@@ -68,7 +74,7 @@ public class AddToCartActivity extends AppCompatActivity {
                 if (i2 > 0) {
                     int hrg = Integer.parseInt(harga);
                     int qty = Integer.parseInt(String.valueOf(qtyText.getText()));
-                    int total = hrg * qty;
+                    total = hrg * qty;
                     totalText.setText(String.valueOf(total));
                     Log.d(TAG, "if");
                 } else {
@@ -87,6 +93,11 @@ public class AddToCartActivity extends AppCompatActivity {
         btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                grandTotal = (sharedPreferences).getString(PrefManager.GRAND_TOTAL,"");
+                int grand = Integer.parseInt(grandTotal);
+                total += grand;
+                prefManager.setGrandTotal(String.valueOf(total));
+                Log.d(TAG, "grandTotal: " + total);
                 addToCart(id,nama,qtyText.getText().toString(),harga);
             }
         });
@@ -104,11 +115,30 @@ public class AddToCartActivity extends AppCompatActivity {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
         String buyDate = format.format(now);
         Cart cart = new Cart(buyDate,idBarang,namaBarang,jumlah,harga);
-        myRef = database.getReference("cart/"+userId+"/"+buyDate);
+        myRef = database.getReference("cart/"+userId+"/"+buyDate+"");
         myRef.setValue(cart);
-        Intent intent = new Intent(AddToCartActivity.this, CartActivity.class);
-        startActivity(intent);
-        finish();
+        builder.setTitle("Omni")
+                .setMessage("Barang berhasil ditambahkan ke Keranjang Belanja")
+                .setPositiveButton("Scan Lagi", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent(AddToCartActivity.this, ScannerActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                })
+                .setNegativeButton("Bayar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent(AddToCartActivity.this, CartActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                })
+                .show();
+        currentStok = Integer.parseInt(stok) - Integer.parseInt(jumlah);
+        updateStok = database.getReference("barang/"+id+"/stok");
+        updateStok.setValue(String.valueOf(currentStok));
         //Toast.makeText(this, buyDate, Toast.LENGTH_LONG).show();
     }
 
@@ -133,6 +163,7 @@ public class AddToCartActivity extends AppCompatActivity {
                 harga = String.valueOf(dummy.getHarga());
                 namaText.setText(nama);
                 hargaText.setText(harga);
+                stok = String.valueOf(dummy.getStok());
 
                 /*String value = dataSnapshot.getValue(String.class);*/
                 /*Log.d(TAG, "Value is: " + value);*/
@@ -144,5 +175,29 @@ public class AddToCartActivity extends AppCompatActivity {
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Apakah Anda yakin akan keluar?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        myRef.removeValue();
+//                        Intent intent = new Intent(AddToCartActivity.this, MainActivity.class);
+//                        startActivity(intent);
+//                        finish();
+                        AddToCartActivity.super.onBackPressed();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .show();
     }
 }

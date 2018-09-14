@@ -5,7 +5,19 @@ package com.zero.next.retailscanner;
  */
 
 public class Product {
-    String id, nama, harga;
+    String id;
+    String nama;
+    String harga;
+
+    public String getStok() {
+        return stok;
+    }
+
+    public void setStok(String stok) {
+        this.stok = stok;
+    }
+
+    String stok;
 
     public Product() {
 

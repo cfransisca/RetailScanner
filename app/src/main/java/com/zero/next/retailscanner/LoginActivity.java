@@ -1,8 +1,10 @@
 package com.zero.next.retailscanner;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -27,13 +29,16 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.zero.next.retailscanner.data.User;
+import com.zero.next.retailscanner.sqlconnection.ConnectionHandler;
+
+import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
     private static final String TAG = "omni";
-    private static final int REQUEST_RESOLVE_ERROR = 1001;
+    private static final int REQUEST_RESOLVE_ERROR = 1001; //google default response
     private GoogleApiClient mGoogleApiClient;
-    private static final int RC_SIGN_IN = 9001;
+    private static final int RC_SIGN_IN = 9001; //google default response
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private String user_email;
@@ -64,7 +69,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         SignInButton signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         signInButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
                 signIn();
@@ -85,7 +89,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         .build();
 
         mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
+        /*mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -96,7 +100,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 }
 
             }
-        };
+        };*/
     }
 
     private void signIn() {
@@ -104,20 +108,52 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    private void writeNewUser(String id, String name, String email) {
-        User user = new User(name, email);
+    private void writeNewUser(final String id, final String name, final String email, final String balance) {
+        User user = new User(id, name, email, balance);
         userDatabaseRef = userDatabase.getReference("users/"+id);
         userDatabaseRef.setValue(user);
+
+        //write to sql
+        class InsertUser extends AsyncTask<Void, Void, String>{
+            ConnectionHandler conn = new ConnectionHandler();
+            ProgressDialog progress;
+            @Override
+            protected String doInBackground(Void... voids) {
+                HashMap<String, String> params = new HashMap<>();
+                params.put("user_id", id);
+                params.put("user_name", name);
+                params.put("user_email", email);
+                params.put("balance", balance);
+//              String s = conn.sendGetRequest("http://10.208.73.29/retail/customersRegistration.php?user_id=" + id + "&&user_name=" + name + "&&user_email=" + email + "&&balance=" + balance);
+                String s = conn.sendPostRequest("http://192.168.43.87/retail/customersRegistration.php",params);
+
+                return s;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                progress = ProgressDialog.show(LoginActivity.this, "Processing...", "Wait....", false, false);
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                progress.dismiss();
+                Log.d("sql", s);
+            }
+        }
+
+        InsertUser insertUser = new InsertUser();
+        insertUser.execute();
     }
 
-    @Override
+    /*@Override
     public void startActivityForResult(Intent intent, int requestCode){
         try {
             super.startActivityForResult(intent,requestCode);
         }catch (Exception e){
             e.printStackTrace();
         }
-    }
+    }*/
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -127,6 +163,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
+            //result dalam bentuk json
         }
     }
 
@@ -139,7 +176,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             prefManager.setUserEmail(user_email);
             prefManager.setUserName(user_name);
             prefManager.setUserId(user_id);
-            writeNewUser(user_id,user_name,user_email);
+            writeNewUser(user_id,user_name,user_email,"0");
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -158,7 +195,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         //updateUI(currentUser);
     }
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+    /*private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -182,7 +219,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         // ...
                     }
                 });
-    }
+    }*/
 
 
     @Override

@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     PrefManager mainPref;
     SharedPreferences mainSharedPref;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,16 +29,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mainPref.setGrandTotal("0");
         TextView user = findViewById(R.id.tuser);
         user.setText(prefUsername);
-        user.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent cart = new Intent(MainActivity.this, CartActivity.class);
-                startActivity(cart);
-            }
-        });
-
+//        user.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent cart = new Intent(MainActivity.this, CartActivity.class);
+//                startActivity(cart);
+//            }
+//        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 /*untuk pindah ke activity scanner*/
                 Intent scanner = new Intent(MainActivity.this, ScannerActivity.class);
                 startActivity(scanner);
+                finish();
             }
         });
     }

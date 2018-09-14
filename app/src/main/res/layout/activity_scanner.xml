@@ -6,4 +6,14 @@
     android:layout_height="match_parent"
     tools:context="com.zero.next.retailscanner.ScannerActivity">
 
+    <com.journeyapps.barcodescanner.DecoratedBarcodeView
+        android:id="@+id/scanner"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+    </com.journeyapps.barcodescanner.DecoratedBarcodeView>
+
 </RelativeLayout>

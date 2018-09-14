@@ -47,8 +47,12 @@ public class AdapterOrder extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         myHolder.nama.setText(dataOrder.namaBarang);
         myHolder.harga.setText(dataOrder.harga);
         myHolder.qty.setText(dataOrder.jumlah);
+        int tempHarga = Integer.parseInt(dataOrder.harga);
+        int tempJumlah = Integer.parseInt(dataOrder.jumlah);
+        int total = tempHarga * tempJumlah;
         /*int total = Integer.parseInt(myHolder.harga.getText().toString()) * Integer.parseInt(myHolder.qty.getText().toString());
-        myHolder.grandTotal.setText(String.valueOf(total));*/
+        */
+        myHolder.grandTotal.setText(String.valueOf(total));
     }
 
     @Override

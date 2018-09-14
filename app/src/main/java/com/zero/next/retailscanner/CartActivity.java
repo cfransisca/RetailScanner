@@ -1,10 +1,14 @@
 package com.zero.next.retailscanner;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,9 +28,10 @@ public class CartActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     FirebaseDatabase firebase;
     DatabaseReference myRef;
-    String id;
+    String id, cartGrandTotal;
     AdapterOrder mAdapter;
     RecyclerView recyclerView;
+    TextView total;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +41,12 @@ public class CartActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(PrefManager.PREF_NAME, PrefManager.PRIVATE_MODE);
         firebase = FirebaseDatabase.getInstance();
         id = (sharedPreferences).getString(PrefManager.USER_ID,"");
-        myRef = firebase.getReference("cart/"+id);
+        cartGrandTotal = (sharedPreferences).getString(PrefManager.GRAND_TOTAL, "");
+        myRef = firebase.getReference("cart/"+id+"buydate");
         recyclerView = findViewById(R.id.cartRec);
+        total = findViewById(R.id.cartTotal);
+        total.setText(cartGrandTotal);
         showData();
-
     }
 
     private void showData() {
@@ -68,5 +75,28 @@ public class CartActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Keranjang Belanja akan terhapus. Apakah Anda yakin akan keluar?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        myRef.removeValue();
+                        Intent intent = new Intent(CartActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .show();
     }
 }
