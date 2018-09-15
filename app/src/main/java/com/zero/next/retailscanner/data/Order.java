@@ -11,4 +11,5 @@ public class Order {
     public String namaBarang;
     public String jumlah;
     public String harga;
+    public String cartpath;
 }

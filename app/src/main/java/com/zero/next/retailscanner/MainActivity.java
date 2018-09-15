@@ -32,13 +32,14 @@ public class MainActivity extends AppCompatActivity {
         mainPref.setGrandTotal("0");
         TextView user = findViewById(R.id.tuser);
         user.setText(prefUsername);
-//        user.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent cart = new Intent(MainActivity.this, CartActivity.class);
-//                startActivity(cart);
-//            }
-//        });
+        user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent cart = new Intent(MainActivity.this, CartActivity.class);
+                cart.putExtra("namatoko","omniubayatenggilis");
+                startActivity(cart);
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

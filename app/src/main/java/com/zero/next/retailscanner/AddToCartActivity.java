@@ -24,6 +24,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.zero.next.retailscanner.data.Cart;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -34,7 +36,7 @@ public class AddToCartActivity extends AppCompatActivity {
     TextView namaText, hargaText, totalText;
     EditText qtyText;
     Button btnAddToCart;
-    String id, nama, harga, userId, grandTotal, stok;
+    String id, nama, harga, userId, grandTotal, stok, namatoko;
     int total, currentStok;
     PrefManager prefManager;
     SharedPreferences sharedPreferences;
@@ -54,6 +56,9 @@ public class AddToCartActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String data = intent.getStringExtra("qrResult");
         prosesFbase(data);
+        String[] qrList = data.split(",");
+        namatoko = qrList[0];
+        //nama toko disimpan ke sharedpreferences trus dibandingkan sama atau ga dengan qrlist[0]
     }
 
     private void initComponent() {
@@ -115,7 +120,7 @@ public class AddToCartActivity extends AppCompatActivity {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
         String buyDate = format.format(now);
         Cart cart = new Cart(buyDate,idBarang,namaBarang,jumlah,harga);
-        myRef = database.getReference("cart/"+userId+"/"+buyDate+"");
+        myRef = database.getReference("cart/"+userId+"/cart"+namatoko+"/"+buyDate+"");
         myRef.setValue(cart);
         builder.setTitle("Omni")
                 .setMessage("Barang berhasil ditambahkan ke Keranjang Belanja")
@@ -131,6 +136,7 @@ public class AddToCartActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent = new Intent(AddToCartActivity.this, CartActivity.class);
+                        intent.putExtra("namatoko",namatoko);
                         startActivity(intent);
                         finish();
                     }

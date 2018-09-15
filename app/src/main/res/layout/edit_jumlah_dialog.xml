@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ubah jumlah barang beli"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/texteditjumlah"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignEnd="@+id/totalTxt"
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/totalTxt"
+            android:layout_marginEnd="14dp"
+            android:layout_marginRight="14dp"
+            android:inputType="number"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btnUbahJumlah"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="UBAH" />
+    </LinearLayout>
+
+
+
+</LinearLayout>

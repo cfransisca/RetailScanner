@@ -12,6 +12,7 @@ public class OrderData {
     public String jumlah;
     public String harga;
 
+
     public OrderData() {
     }
 
@@ -54,4 +55,5 @@ public class OrderData {
     public void setJumlah(String jumlah) {
         this.jumlah = jumlah;
     }
+
 }
