@@ -11,6 +11,7 @@ public class OrderData {
     public String namaBarang;
     public String jumlah;
     public String harga;
+    public String qr;
 
 
     public OrderData() {
@@ -56,4 +57,11 @@ public class OrderData {
         this.jumlah = jumlah;
     }
 
+    public String getQr() {
+        return qr;
+    }
+
+    public void setQr(String qr) {
+        this.qr = qr;
+    }
 }

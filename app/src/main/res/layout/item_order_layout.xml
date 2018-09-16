@@ -90,16 +90,25 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="16dp"
             android:background="@color/zxing_transparent"/>
-        <TextView
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/cartpath"
-            android:visibility="visible"/>
+            android:id="@+id/btnCancel"
+            android:text="BATAL"/>
+
 
     </LinearLayout>
 
-
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cartpath"
+        android:visibility="gone"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/qr"
+        android:visibility="visible"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

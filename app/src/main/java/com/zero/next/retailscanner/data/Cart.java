@@ -5,21 +5,23 @@ package com.zero.next.retailscanner.data;
  */
 
 public class Cart {
-    public  String id;
-    public  String idBarang;
+    public String id;
+    public String idBarang;
     public String namaBarang;
     public String jumlah;
-    public  String harga;
+    public String harga;
+    public String qr;
 
     public Cart() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Cart(String id, String idBarang, String namaBarang, String jumlah, String harga) {
+    public Cart(String id, String idBarang, String namaBarang, String jumlah, String harga, String qr) {
         this.id = id;
         this.idBarang = idBarang;
         this.namaBarang = namaBarang;
         this.jumlah = jumlah;
         this.harga = harga;
+        this.qr = qr;
     }
 }

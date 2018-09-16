@@ -43,6 +43,7 @@ public class AdapterOrder extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     Order currentOrder;
 
 
+
     public AdapterOrder(Context context, List<Order> listOrder/*, ItemClickListener itemClickListener*/) {
         this.context = context;
         this.listOrder = listOrder;
@@ -66,11 +67,13 @@ public class AdapterOrder extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         myHolder.harga.setText(dataOrder.harga);
         myHolder.qty.setText(dataOrder.jumlah);
         myHolder.idcart.setText(dataOrder.id);
+        myHolder.qr.setText(dataOrder.qr);
         int tempHarga = Integer.parseInt(dataOrder.harga);
         int tempJumlah = Integer.parseInt(dataOrder.jumlah);
         int total = tempHarga * tempJumlah;
         /*int total = Integer.parseInt(myHolder.harga.getText().toString()) * Integer.parseInt(myHolder.qty.getText().toString());
         */
+        Log.d("qr", "onBindViewHolder: "+dataOrder.qr);
         myHolder.grandTotal.setText(String.valueOf(total));
     }
 
@@ -86,29 +89,33 @@ public class AdapterOrder extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     class MyHolder extends RecyclerView.ViewHolder {
 
-        TextView nama, harga, qty, grandTotal,idcart;
+        TextView nama, harga, qty, grandTotal,idcart,qr;
         ImageView gambar;
         ImageButton editjumlah;
+        Button batal;
         Dialog dialog;
-        FirebaseDatabase firebaseDatabase;
-        DatabaseReference myRef;
+
+//        FirebaseDatabase firebaseDatabase;
+//        DatabaseReference myRef;
         String sIdCart;
 
         public MyHolder(View itemView) {
             super(itemView);
-            firebaseDatabase = FirebaseDatabase.getInstance();
+//            firebaseDatabase = FirebaseDatabase.getInstance();
+            qr = itemView.findViewById(R.id.qr);
             idcart = itemView.findViewById(R.id.cartpath);
             nama = itemView.findViewById(R.id.namaItem);
             gambar = itemView.findViewById(R.id.gbrItem);
             harga = itemView.findViewById(R.id.hrgItem);
             qty = itemView.findViewById(R.id.qtyItem);
             grandTotal = itemView.findViewById(R.id.grandTotal);
+            batal = itemView.findViewById(R.id.btnCancel);
             editjumlah = itemView.findViewById(R.id.editjumlah);
             editjumlah.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     sIdCart = idcart.getText().toString();
-                    myRef = firebaseDatabase.getReference(sIdCart+"/jumlah");
+//                    myRef = firebaseDatabase.getReference(sIdCart+"/jumlah");
                     dialog = new Dialog(context);
                     dialog.setContentView(R.layout.edit_jumlah_dialog);
                     final EditText editText = dialog.findViewById(R.id.texteditjumlah);
@@ -118,10 +125,11 @@ public class AdapterOrder extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         @Override
                         public void onClick(View view) {
                           if(itemClickListener!=null){
-                              itemClickListener.onClick(view,qty.getText().toString(),
+                              itemClickListener.onClick(view,"ubah",qty.getText().toString(),
                                       editText.getText().toString(),
                                       harga.getText().toString(),
-                                      sIdCart+"/jumlah");
+                                      sIdCart+"/jumlah",
+                                      qr.getText().toString());
                           }else {
                               Log.d("handleClick", "onClick: failed");
                           }
@@ -130,6 +138,39 @@ public class AdapterOrder extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 //                            Log.d("path", path+"/jumlah"+editText.getText().toString());
                         }
                     });
+                    dialog.show();
+                }
+            });
+            batal.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sIdCart = idcart.getText().toString();
+                    dialog = new Dialog(context);
+                    dialog.setContentView(R.layout.hapus_barang_dialog);
+                    Button hapusDialog = dialog.findViewById(R.id.btnDialogHapus);
+                    Button batalDialog = dialog.findViewById(R.id.btnDialogCancel);
+                    batalDialog.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
+                    hapusDialog.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if(itemClickListener!=null){
+                                itemClickListener.onClick(view,
+                                        "hapus",
+                                        qty.getText().toString(),
+                                        "",
+                                        harga.getText().toString(),
+                                        sIdCart,
+                                        qr.getText().toString());
+                            }
+                            dialog.dismiss();
+                        }
+                    });
+
                     dialog.show();
                 }
             });

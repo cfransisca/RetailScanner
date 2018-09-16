@@ -33,12 +33,11 @@ public class CartActivity extends AppCompatActivity implements ItemClickListener
     SharedPreferences sharedPreferences;
     FirebaseDatabase firebase;
     DatabaseReference myRef;
-    String id, cartpath, namatoko;
-
+    String id, cartpath, namatoko, isiqr, currentstok;
     AdapterOrder mAdapter;
     RecyclerView recyclerView;
     TextView settotal;
-    int total, cartGrandTotal;
+    int cartGrandTotal, stok;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,17 +50,36 @@ public class CartActivity extends AppCompatActivity implements ItemClickListener
         cartGrandTotal = Integer.parseInt ((sharedPreferences).getString(PrefManager.GRAND_TOTAL, ""));
         Intent getIntent = getIntent();
         namatoko = getIntent.getStringExtra("namatoko");
+        isiqr = getIntent.getStringExtra("qr");
         myRef = firebase.getReference("cart/"+id+"/cart"+namatoko);
         cartpath = "cart/"+id+"/cart"+namatoko+"/";
         recyclerView = findViewById(R.id.cartRec);
         settotal = findViewById(R.id.cartTotal);
         settotal.setText(String.valueOf(cartGrandTotal));
         showData();
+        firebaseStok();
+    }
+
+    private void firebaseStok() {
+        DatabaseReference refStok = firebase.getReference("barang/"+isiqr+"/stok");
+        refStok.keepSynced(true);
+        refStok.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                currentstok = String.valueOf(dataSnapshot.getValue());
+                Log.d("stok", "onDataChange: "+currentstok);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void showData() {
         final List<Order> listOrder = new ArrayList<>();
-
         myRef.keepSynced(true);
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -75,6 +93,7 @@ public class CartActivity extends AppCompatActivity implements ItemClickListener
                     order.namaBarang = String.valueOf(orderdata.getNamaBarang());
                     order.jumlah = String.valueOf(orderdata.getJumlah());
                     order.harga = String.valueOf(orderdata.getHarga());
+                    order.qr = String.valueOf(orderdata.getQr());
                     listOrder.add(order);
 
                 }
@@ -116,28 +135,53 @@ public class CartActivity extends AppCompatActivity implements ItemClickListener
                 .show();
     }
 
+
+
     @Override
-    public void onClick(View view, String jumlahAwal, String jumlahAkhir, String harga, String path) {
+    public void onClick(View view, String tag, String jumlahAwal, String jumlahAkhir, String harga, String path, String qr) {
 //        Log.d("handleClick",data+" "+cartpath+path);
 //        Toast.makeText(this, data, Toast.LENGTH_LONG).show();
-        if(Integer.parseInt(jumlahAkhir)>Integer.parseInt(jumlahAwal)){
-            total = Integer.parseInt(harga) * Integer.parseInt(jumlahAkhir);
-            cartGrandTotal = cartGrandTotal + ((Integer.parseInt(jumlahAkhir)-Integer.parseInt(jumlahAwal)) * Integer.parseInt(harga));
-            settotal.setText(String.valueOf(cartGrandTotal));
-            prefManager.setGrandTotal(String.valueOf(cartGrandTotal));
-        } else if (Integer.parseInt(jumlahAkhir)<Integer.parseInt(jumlahAwal)){
-            total = Integer.parseInt(harga) * Integer.parseInt(jumlahAkhir);
-            cartGrandTotal = cartGrandTotal - ((Integer.parseInt(jumlahAwal)-Integer.parseInt(jumlahAkhir)) * Integer.parseInt(harga));
-            settotal.setText(String.valueOf(cartGrandTotal));
-            prefManager.setGrandTotal(String.valueOf(cartGrandTotal));
-        } else {
+        if(tag.equals("ubah")) {
+            DatabaseReference refUpdate = firebase.getReference("barang/"+qr+"/stok");
+            refUpdate.keepSynced(true);
+            if (Integer.parseInt(jumlahAkhir) > Integer.parseInt(jumlahAwal)) {
+                stok = Integer.parseInt(currentstok) - (Integer.parseInt(jumlahAkhir) - Integer.parseInt(jumlahAwal));
+                cartGrandTotal = cartGrandTotal + ((Integer.parseInt(jumlahAkhir) - Integer.parseInt(jumlahAwal)) * Integer.parseInt(harga));
+                settotal.setText(String.valueOf(cartGrandTotal));
+                prefManager.setGrandTotal(String.valueOf(cartGrandTotal));
 
+                refUpdate.setValue(String.valueOf(stok));
+            } else if (Integer.parseInt(jumlahAkhir) < Integer.parseInt(jumlahAwal)) {
+                stok = Integer.parseInt(currentstok) + (Integer.parseInt(jumlahAwal) - Integer.parseInt(jumlahAkhir));
+                cartGrandTotal = cartGrandTotal - ((Integer.parseInt(jumlahAwal) - Integer.parseInt(jumlahAkhir)) * Integer.parseInt(harga));
+                settotal.setText(String.valueOf(cartGrandTotal));
+                prefManager.setGrandTotal(String.valueOf(cartGrandTotal));
+
+                refUpdate.setValue(String.valueOf(stok));
+            } else {
+
+            }
+            DatabaseReference refJumlah = firebase.getReference(cartpath+path);
+
+
+            refJumlah.keepSynced(true);
+            refJumlah.setValue(jumlahAkhir);
+
+            showData();
+        } else if(tag.equals("hapus")) {
+
+            cartGrandTotal = cartGrandTotal - (Integer.parseInt(jumlahAwal)*Integer.parseInt(harga));
+            settotal.setText(String.valueOf(cartGrandTotal));
+            prefManager.setGrandTotal(String.valueOf(cartGrandTotal));
+            DatabaseReference refHapus = firebase.getReference(cartpath+path);
+            DatabaseReference refUpdate = firebase.getReference("barang/"+qr+"/stok");
+            refUpdate.keepSynced(true);
+            stok = Integer.parseInt(currentstok) + Integer.parseInt(jumlahAwal);
+            refHapus.removeValue();
+            Log.d("stok", String.valueOf(stok));
+            refUpdate.setValue(String.valueOf(stok));
+            showData();
         }
 
-        DatabaseReference refJumlah = firebase.getReference(cartpath+path);
-        refJumlah.keepSynced(true);
-        refJumlah.setValue(jumlahAkhir);
-
-        showData();
     }
 }

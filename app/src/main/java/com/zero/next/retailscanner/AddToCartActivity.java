@@ -36,7 +36,7 @@ public class AddToCartActivity extends AppCompatActivity {
     TextView namaText, hargaText, totalText;
     EditText qtyText;
     Button btnAddToCart;
-    String id, nama, harga, userId, grandTotal, stok, namatoko;
+    String id, nama, harga, userId, grandTotal, stok, namatoko, data;
     int total, currentStok;
     PrefManager prefManager;
     SharedPreferences sharedPreferences;
@@ -54,7 +54,7 @@ public class AddToCartActivity extends AppCompatActivity {
         initComponent();
 
         Intent intent = getIntent();
-        String data = intent.getStringExtra("qrResult");
+        data = intent.getStringExtra("qrResult");
         prosesFbase(data);
         String[] qrList = data.split(",");
         namatoko = qrList[0];
@@ -103,7 +103,7 @@ public class AddToCartActivity extends AppCompatActivity {
                 total += grand;
                 prefManager.setGrandTotal(String.valueOf(total));
                 Log.d(TAG, "grandTotal: " + total);
-                addToCart(id,nama,qtyText.getText().toString(),harga);
+                addToCart(id,nama,qtyText.getText().toString(),harga,data);
             }
         });
     }
@@ -114,15 +114,15 @@ public class AddToCartActivity extends AppCompatActivity {
         userDatabaseRef.setValue(user);
     }*/
 
-    private void addToCart(String idBarang, String namaBarang, String jumlah, String harga) {
+    private void addToCart(String idBarang, String namaBarang, String jumlah, String harga, String qr) {
 
         Date now = Calendar.getInstance().getTime();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
         String buyDate = format.format(now);
-        Cart cart = new Cart(buyDate,idBarang,namaBarang,jumlah,harga);
+        Cart cart = new Cart(buyDate,idBarang,namaBarang,jumlah,harga,qr);
         myRef = database.getReference("cart/"+userId+"/cart"+namatoko+"/"+buyDate+"");
         myRef.setValue(cart);
-        builder.setTitle("Omni")
+        builder.setTitle(namatoko)
                 .setMessage("Barang berhasil ditambahkan ke Keranjang Belanja")
                 .setPositiveButton("Scan Lagi", new DialogInterface.OnClickListener() {
                     @Override
@@ -137,6 +137,7 @@ public class AddToCartActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent = new Intent(AddToCartActivity.this, CartActivity.class);
                         intent.putExtra("namatoko",namatoko);
+                        intent.putExtra("qr",data);
                         startActivity(intent);
                         finish();
                     }
