@@ -103,7 +103,20 @@ public class AddToCartActivity extends AppCompatActivity {
                 total += grand;
                 prefManager.setGrandTotal(String.valueOf(total));
                 Log.d(TAG, "grandTotal: " + total);
+                if(!qtyText.getText().toString().equals("")){
                 addToCart(id,nama,qtyText.getText().toString(),harga,data);
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(AddToCartActivity.this);
+                    builder.setMessage("Jumlah barang belum diisi. Silahkan isi terlebih dahulu.")
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    qtyText.requestFocus();
+                                }
+                            })
+                            .show();
+                }
             }
         });
     }
@@ -119,6 +132,7 @@ public class AddToCartActivity extends AppCompatActivity {
         Date now = Calendar.getInstance().getTime();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
         String buyDate = format.format(now);
+        //penyimpanan ke dalam firebase
         Cart cart = new Cart(buyDate,idBarang,namaBarang,jumlah,harga,qr);
         myRef = database.getReference("cart/"+userId+"/cart"+namatoko+"/"+buyDate+"");
         myRef.setValue(cart);
@@ -127,7 +141,7 @@ public class AddToCartActivity extends AppCompatActivity {
                 .setPositiveButton("Scan Lagi", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent(AddToCartActivity.this, ScannerActivity.class);
+                        Intent intent = new Intent(AddToCartActivity.this, Scanner2Activity.class);
                         startActivity(intent);
                         finish();
                     }
@@ -135,6 +149,7 @@ public class AddToCartActivity extends AppCompatActivity {
                 .setNegativeButton("Bayar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        //pindah halaman ke keranjang belanja
                         Intent intent = new Intent(AddToCartActivity.this, CartActivity.class);
                         intent.putExtra("namatoko",namatoko);
                         intent.putExtra("qr",data);
@@ -143,6 +158,7 @@ public class AddToCartActivity extends AppCompatActivity {
                     }
                 })
                 .show();
+        //update stok firebase
         currentStok = Integer.parseInt(stok) - Integer.parseInt(jumlah);
         updateStok = database.getReference("barang/"+id+"/stok");
         updateStok.setValue(String.valueOf(currentStok));

@@ -48,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
                 /*untuk pindah ke activity scanner*/
-                Intent scanner = new Intent(MainActivity.this, ScannerActivity.class);
+                Intent scanner = new Intent(MainActivity.this, Scanner2Activity.class);
                 startActivity(scanner);
-                finish();
+                //finish();
             }
         });
     }

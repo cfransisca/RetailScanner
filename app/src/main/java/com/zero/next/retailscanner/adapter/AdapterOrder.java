@@ -125,7 +125,8 @@ public class AdapterOrder extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         @Override
                         public void onClick(View view) {
                           if(itemClickListener!=null){
-                              itemClickListener.onClick(view,"ubah",qty.getText().toString(),
+                              itemClickListener.onClick(view,"ubah",
+                                      qty.getText().toString(),
                                       editText.getText().toString(),
                                       harga.getText().toString(),
                                       sIdCart+"/jumlah",

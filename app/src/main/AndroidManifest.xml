@@ -47,6 +47,7 @@
             android:name=".AddToCartActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan"></activity>
         <activity android:name=".CartActivity"></activity>
+        <activity android:name=".Scanner2Activity"></activity>
     </application>
 
 </manifest>

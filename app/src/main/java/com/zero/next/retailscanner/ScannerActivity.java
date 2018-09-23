@@ -29,33 +29,33 @@ import retailscannerhelper.AnyOrientationCaptureActivity;
 
 public class ScannerActivity extends AppCompatActivity {
     private static final String TAG = "scan";
-//    DecoratedBarcodeView barcodeView;
+    DecoratedBarcodeView barcodeView;
 
-//    private BarcodeCallback callback = new BarcodeCallback() {
-//        @Override
-//        public void barcodeResult(BarcodeResult result) {
-//            Intent intent = new Intent(ScannerActivity.this, AddToCartActivity.class);
-//            intent.putExtra("qrResult", result.getText());
-//            startActivity(intent);
-//            Log.d(TAG, "onActivityResult: "+result.getText());
-//            finish();
-//        }
-//
-//        @Override
-//        public void possibleResultPoints(List<ResultPoint> resultPoints) {
-//
-//        }
-//    };
+    /*private BarcodeCallback callback = new BarcodeCallback() {
+        @Override
+        public void barcodeResult(BarcodeResult result) {
+            Intent intent = new Intent(ScannerActivity.this, AddToCartActivity.class);
+            intent.putExtra("qrResult", result.getText());
+            startActivity(intent);
+            Log.d(TAG, "onActivityResult: "+result.getText());
+            finish();
+        }
+
+        @Override
+        public void possibleResultPoints(List<ResultPoint> resultPoints) {
+
+        }
+    };*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanner);
-//        barcodeView = findViewById(R.id.scanner);
-//
-//        Collection<BarcodeFormat> formats = Arrays.asList(BarcodeFormat.QR_CODE); //macam2 format barcode (QR/barcode) as array
-//        barcodeView.getBarcodeView().setDecoderFactory(new DefaultDecoderFactory(formats));
-//        barcodeView.decodeContinuous(callback);
+        /*barcodeView = findViewById(R.id.scanner);
+
+        Collection<BarcodeFormat> formats = Arrays.asList(BarcodeFormat.QR_CODE); //macam2 format barcode (QR/barcode) as array
+        barcodeView.getBarcodeView().setDecoderFactory(new DefaultDecoderFactory(formats));
+        barcodeView.decodeContinuous(callback);*/
 
         /*scanner*/
         IntentIntegrator integrator = new IntentIntegrator(this); //manggil lib scanner

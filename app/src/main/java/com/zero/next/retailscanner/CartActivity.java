@@ -142,6 +142,7 @@ public class CartActivity extends AppCompatActivity implements ItemClickListener
 //        Log.d("handleClick",data+" "+cartpath+path);
 //        Toast.makeText(this, data, Toast.LENGTH_LONG).show();
         if(tag.equals("ubah")) {
+
             DatabaseReference refUpdate = firebase.getReference("barang/"+qr+"/stok");
             refUpdate.keepSynced(true);
             if (Integer.parseInt(jumlahAkhir) > Integer.parseInt(jumlahAwal)) {
@@ -161,6 +162,7 @@ public class CartActivity extends AppCompatActivity implements ItemClickListener
             } else {
 
             }
+//
             DatabaseReference refJumlah = firebase.getReference(cartpath+path);
 
 
