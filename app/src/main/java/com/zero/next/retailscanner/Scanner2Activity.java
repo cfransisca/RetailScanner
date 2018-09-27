@@ -2,6 +2,7 @@ package com.zero.next.retailscanner;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -32,7 +33,10 @@ import java.util.Collection;
 import java.util.List;
 
 public class Scanner2Activity extends AppCompatActivity {
+    SharedPreferences sharedPreferences;
 
+    String grandTotal,namatoko;
+    private int requestCode=100;
     private DecoratedBarcodeView barcodeView;
     private String TAG = Scanner2Activity.class.getSimpleName();
     private BarcodeCallback callback = new BarcodeCallback() {
@@ -68,11 +72,14 @@ public class Scanner2Activity extends AppCompatActivity {
         public void possibleResultPoints(List<ResultPoint> resultPoints) {
         }
     };
-    private int requestCode=100;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getSharedPreferences(PrefManager.PREF_NAME, PrefManager.PRIVATE_MODE);
+        grandTotal = (sharedPreferences).getString(PrefManager.GRAND_TOTAL, "");
+        namatoko = (sharedPreferences).getString(PrefManager.TOKO, "");
         setContentView(R.layout.activity_scanner);
 
         if (ContextCompat.checkSelfPermission(Scanner2Activity.this, Manifest.permission.CAMERA)
@@ -80,8 +87,8 @@ public class Scanner2Activity extends AppCompatActivity {
             ActivityCompat.requestPermissions(Scanner2Activity.this, new String[] {Manifest.permission.CAMERA}, requestCode);
         }
         barcodeView = findViewById(R.id.scanner);
-        barcodeView.setStatusText("Stabilkan ponsel Anda");
-        Collection<BarcodeFormat> formats = Arrays.asList(BarcodeFormat.QR_CODE, BarcodeFormat.CODE_39);
+        barcodeView.setStatusText("Arahkan Pada QR dengan Stabil");
+        Collection<BarcodeFormat> formats = Arrays.asList(BarcodeFormat.QR_CODE);
         barcodeView.getBarcodeView().setDecoderFactory(new DefaultDecoderFactory(formats));
         barcodeView.decodeContinuous(callback);
 
@@ -116,5 +123,21 @@ public class Scanner2Activity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return barcodeView.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        namatoko = (sharedPreferences).getString(PrefManager.TOKO, "");
+        if(Integer.parseInt(grandTotal)==0){
+            Intent goBack = new Intent(Scanner2Activity.this,Main2Activity.class);
+            startActivity(goBack);
+            finish();
+        } else {
+            Intent backToCart = new Intent(Scanner2Activity.this, CartActivity.class);
+            backToCart.putExtra("namatoko",namatoko);
+            startActivity(backToCart);
+            finish();
+        }
     }
 }

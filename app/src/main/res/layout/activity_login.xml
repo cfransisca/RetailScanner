@@ -9,14 +9,24 @@
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="137dp"
+        tools:layout_editor_absoluteY="220dp" />
 
     <TextView
-        android:id="@+id/te"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="68dp"
-        tools:ignore="MissingConstraints" />
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selamat datang. Silahkan login untuk menggunakan aplikasi"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="165dp" />
+
+    <!--<TextView-->
+        <!--android:id="@+id/te"-->
+        <!--android:layout_width="50dp"-->
+        <!--android:layout_height="50dp"-->
+        <!--tools:layout_editor_absoluteX="16dp"-->
+        <!--tools:layout_editor_absoluteY="68dp"-->
+        <!--tools:ignore="MissingConstraints" />-->
 
 </android.support.constraint.ConstraintLayout>

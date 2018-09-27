@@ -1,5 +1,6 @@
 package com.zero.next.retailscanner;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -35,12 +37,14 @@ public class AddToCartActivity extends AppCompatActivity {
     DatabaseReference myRef, updateStok;
     TextView namaText, hargaText, totalText;
     EditText qtyText;
-    Button btnAddToCart;
+    Button btnAddToCart, btnCancel;
     String id, nama, harga, userId, grandTotal, stok, namatoko, data;
     int total, currentStok;
     PrefManager prefManager;
     SharedPreferences sharedPreferences;
     AlertDialog.Builder builder;
+    InputMethodManager imm;
+    View view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +52,14 @@ public class AddToCartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_to_cart);
         database = FirebaseDatabase.getInstance();
         prefManager = new PrefManager(this);
+
         sharedPreferences = getSharedPreferences(PrefManager.PREF_NAME, PrefManager.PRIVATE_MODE);
         userId = (sharedPreferences).getString(PrefManager.USER_ID, "");
+
+        grandTotal = (sharedPreferences).getString(PrefManager.GRAND_TOTAL,"");
         Toast.makeText(this,userId,Toast.LENGTH_LONG).show();
+        /*imm = (InputMethodManager)AddToCartActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(),0);*/
         initComponent();
 
         Intent intent = getIntent();
@@ -58,6 +67,7 @@ public class AddToCartActivity extends AppCompatActivity {
         prosesFbase(data);
         String[] qrList = data.split(",");
         namatoko = qrList[0];
+        prefManager.setToko(namatoko);
         //nama toko disimpan ke sharedpreferences trus dibandingkan sama atau ga dengan qrlist[0]
     }
 
@@ -95,10 +105,11 @@ public class AddToCartActivity extends AppCompatActivity {
         });
 
         btnAddToCart = findViewById(R.id.btnAddToCart);
+        btnCancel = findViewById(R.id.btnCancelAddtoCart);
         btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                grandTotal = (sharedPreferences).getString(PrefManager.GRAND_TOTAL,"");
+
                 int grand = Integer.parseInt(grandTotal);
                 total += grand;
                 prefManager.setGrandTotal(String.valueOf(total));
@@ -119,6 +130,23 @@ public class AddToCartActivity extends AppCompatActivity {
                 }
             }
         });
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(Integer.parseInt(grandTotal)==0){
+                    Intent goBack = new Intent(AddToCartActivity.this,Main2Activity.class);
+                    startActivity(goBack);
+                    finish();
+                } else {
+                    Intent backToCart = new Intent(AddToCartActivity.this, CartActivity.class);
+                    backToCart.putExtra("namatoko",namatoko);
+                    backToCart.putExtra("qr",data);
+                    startActivity(backToCart);
+                    finish();
+                }
+            }
+        });
+
     }
 
     /*private void writeNewUser(String id, String name, String email) {
@@ -128,7 +156,11 @@ public class AddToCartActivity extends AppCompatActivity {
     }*/
 
     private void addToCart(String idBarang, String namaBarang, String jumlah, String harga, String qr) {
-
+        if(Integer.parseInt(stok)<Integer.parseInt(jumlah)){
+            //muncul alert stok kurang dari inputan
+        } else {
+            //jalankan semua fungsi yg dibawah ini
+        }
         Date now = Calendar.getInstance().getTime();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
         String buyDate = format.format(now);
@@ -136,6 +168,10 @@ public class AddToCartActivity extends AppCompatActivity {
         Cart cart = new Cart(buyDate,idBarang,namaBarang,jumlah,harga,qr);
         myRef = database.getReference("cart/"+userId+"/cart"+namatoko+"/"+buyDate+"");
         myRef.setValue(cart);
+        //update stok firebase
+        currentStok = Integer.parseInt(stok) - Integer.parseInt(jumlah);
+        updateStok = database.getReference("barang/"+id+"/stok");
+        updateStok.setValue(String.valueOf(currentStok));
         builder.setTitle(namatoko)
                 .setMessage("Barang berhasil ditambahkan ke Keranjang Belanja")
                 .setPositiveButton("Scan Lagi", new DialogInterface.OnClickListener() {
@@ -158,15 +194,12 @@ public class AddToCartActivity extends AppCompatActivity {
                     }
                 })
                 .show();
-        //update stok firebase
-        currentStok = Integer.parseInt(stok) - Integer.parseInt(jumlah);
-        updateStok = database.getReference("barang/"+id+"/stok");
-        updateStok.setValue(String.valueOf(currentStok));
+
         //Toast.makeText(this, buyDate, Toast.LENGTH_LONG).show();
     }
 
     private void prosesFbase(String contents) {
-        myRef = database.getReference("barang/"+contents); //omni-ubaya/barang/sasa
+        myRef = database.getReference("barang/"+contents); //omniubaya/barang/sasa
         myRef.keepSynced(true);
         /*Read from the database*/
         myRef.addValueEventListener(new ValueEventListener() {
@@ -174,12 +207,7 @@ public class AddToCartActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                /*cart*/
-                /*for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Product dummy = child.getValue(Product.class);
-                    String nama = String.valueOf(dummy.getNama());
-                    String harga = String.valueOf(dummy.getHarga());
-                }*/
+
                 Product dummy = dataSnapshot.getValue(Product.class);
                 id = String.valueOf(dummy.getId());
                 nama = String.valueOf(dummy.getNama());
@@ -188,8 +216,8 @@ public class AddToCartActivity extends AppCompatActivity {
                 hargaText.setText(harga);
                 stok = String.valueOf(dummy.getStok());
 
-                /*String value = dataSnapshot.getValue(String.class);*/
-                /*Log.d(TAG, "Value is: " + value);*/
+
+//                Log.d(TAG, "Value is: " + dataSnapshot);
             }
 
             @Override

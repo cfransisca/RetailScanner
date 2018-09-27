@@ -115,7 +115,6 @@ public class AdapterOrder extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 @Override
                 public void onClick(View view) {
                     sIdCart = idcart.getText().toString();
-//                    myRef = firebaseDatabase.getReference(sIdCart+"/jumlah");
                     dialog = new Dialog(context);
                     dialog.setContentView(R.layout.edit_jumlah_dialog);
                     final EditText editText = dialog.findViewById(R.id.texteditjumlah);
